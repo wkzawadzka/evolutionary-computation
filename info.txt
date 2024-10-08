@@ -1,0 +1,15 @@
+- each week deadline
+- 0-100 scale of grading
+- 50:report 50:presentation
+- absence -> postpond presentation otherwise 0 for presentation
+- write names on top always
+- Python not recommended (except visualisation)
+- very basic libraries
+- link to github repository (public!)
+- running times
+- conclusions: best/worse methods, justification, examples, observations, what's interesting
+
+----------------------------------
+lecture: exam at last meeting
+labs: just assignments; presence obligatory; 5 does not guarantee free from lecture exam
+----------------------------------
