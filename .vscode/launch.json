@@ -19,26 +19,10 @@
         },
         {
             "type": "java",
-            "name": "InputGenerator",
-            "request": "launch",
-            "mainClass": "src.java.src.main.java.evcomp.utils.InputGenerator",
-            "projectName": "evolutionary-computation_11514032",
-            "args": ["A"]
-        },
-        {
-            "type": "java",
             "name": "App(1)",
             "request": "launch",
             "mainClass": "evcomp.App",
             "projectName": "java"
-        },
-        {
-            "type": "java",
-            "name": "InputGenerator(1)",
-            "request": "launch",
-            "mainClass": "evcomp.utils.InputGenerator",
-            "projectName": "java",
-            "args": ["A"]
         }
     ]
 }
