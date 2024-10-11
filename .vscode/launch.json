@@ -6,9 +6,26 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Java Program",
+            "request": "launch",
+            "mainClass": ""
+        },
+        {
+            "type": "java",
+            "name": "RandomMethod",
+            "request": "launch",
+            "mainClass": "evcomp.w1_greedy_heuristics.RandomMethod",
+            "projectName": "java"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
-            "mainClass": "${file}"
+            "mainClass": "${file}",
+            "args": [
+                "A",
+                "200"
+            ]
         },
         {
             "type": "java",
