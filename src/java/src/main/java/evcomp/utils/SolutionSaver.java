@@ -12,10 +12,12 @@ public class SolutionSaver {
     
     private String weekName;
     private String methodName;
+    private String instance;
 
-    public SolutionSaver(String weekName, String methodName) {
+    public SolutionSaver(String weekName, String methodName, String instance) {
         this.weekName = weekName;
         this.methodName = methodName;
+        this.instance = instance;
     }
 
     /**
@@ -30,7 +32,7 @@ public class SolutionSaver {
      */
     public void saveSolution(List<Integer> solution, int runNumber, long timeTaken, 
                              int totalCost, int totalDistance, int objFuncValue) {
-        Path directoryPath = Paths.get("data", "method_outputs", weekName, methodName);
+        Path directoryPath = Paths.get("data", "method_outputs", weekName, methodName, instance);
         File dir = directoryPath.toFile();
 
         // Create directory if it does not exist

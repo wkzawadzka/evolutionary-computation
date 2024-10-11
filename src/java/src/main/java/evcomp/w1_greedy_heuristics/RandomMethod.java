@@ -34,7 +34,7 @@ public class RandomMethod {
         int[][] distanceMatrix = inputGenerator.getDistanceMatrix();
         List<Node> nodeList = inputGenerator.getNodeList();
 
-        SolutionSaver solutionSaver = new SolutionSaver("w1_greedy_heuristics", "RandomMethod");
+        SolutionSaver solutionSaver = new SolutionSaver("w1_greedy_heuristics", "RandomMethod", instance);
         Evaluator evaluator = new Evaluator();
 
         // Perform experiment
