@@ -1,4 +1,4 @@
-package evcomp.w1-greedy-heuristics;
+package evcomp.w1_greedy_heuristics;
 
 import evcomp.utils.InputGenerator;
 import evcomp.utils.Node;
