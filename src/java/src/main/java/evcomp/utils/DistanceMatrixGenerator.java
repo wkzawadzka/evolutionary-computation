@@ -42,7 +42,7 @@ public class DistanceMatrixGenerator {
                     // The distances between nodes are calculated as Euclidean distances
                     // rounded mathematically to integer values.
                     int distance = Math.round(
-                        (float) Math.sqrt(Math.pow(node1.getX() - node2.getX(), 2) + Math.pow(node1.getY() - node2.getY(), 2))
+                        (float) Math.sqrt(Math.pow(node2.getX() - node1.getX(), 2) + Math.pow(node2.getY() - node1.getY(), 2))
                     );
                     distanceMatrix[i][j] = distance;
                 } else {
