@@ -75,7 +75,7 @@ def create_summary_report(df, week_name):
     insertHR(p)
     for instance in df['instance'].unique():
         doc.add_heading(f'Instance: {instance}', level=3)
-        print_solutions_with_highest_fval(doc, df, instance)
+        print_solutions_with_lowest_fval(doc, df, instance)
     doc.add_page_break()
 
     # save the document

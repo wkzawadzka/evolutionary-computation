@@ -19,19 +19,19 @@ def create_summary_table(df, instance):
     return variable_labels, summary_stats
 
 
-def print_solutions_with_highest_fval(doc, df, instance):
+def print_solutions_with_lowest_fval(doc, df, instance):
     df_subset = df[df['instance'] == instance]
     grouped = df_subset.groupby('method') # by method
     
     for method, group in grouped:
-        # best_sol -> highest f_val
-        max_fval_row = group.loc[group['f_val'].idxmax()]
+        # best_sol -> lowest f_val
+        min_fval_row = group.loc[group['f_val'].idxmin()]
         
         doc.add_heading(f"Method: {method}", level=4)
-        doc.add_paragraph(f"Highest Objective Function Value (f_val): {max_fval_row['f_val']}")
+        doc.add_paragraph(f"Lowest Objective Function Value (f_val): {min_fval_row['f_val']}")
         
         doc.add_paragraph(f"Solution:")
         solution_paragraph = doc.add_paragraph()
-        solution_paragraph.add_run(", ".join(map(str, max_fval_row['solution'])))
+        solution_paragraph.add_run(", ".join(map(str, min_fval_row['solution'])))
         
         doc.add_paragraph("-" * 40)
