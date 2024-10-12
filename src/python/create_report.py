@@ -5,6 +5,7 @@ from docx.shared import Inches
 from read_solution_files import *
 from tables import *
 from utils import *
+from visualizations import *
 from docx.shared import Pt
 from datetime import datetime
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
@@ -67,6 +68,11 @@ def create_summary_report(df, week_name):
     doc.add_heading(f'2D visualisations of best solutions', level=2)
     p = doc.add_paragraph("")
     insertHR(p)
+    for instance in df['instance'].unique():
+        doc.add_heading(f'Instance: {instance}', level=3)
+        generate_visualizations(doc, df, instance)
+        p = doc.add_paragraph("")
+        insertHR(p)
     doc.add_page_break()
 
     # printed solutions
@@ -77,6 +83,9 @@ def create_summary_report(df, week_name):
         doc.add_heading(f'Instance: {instance}', level=3)
         print_solutions_with_lowest_fval(doc, df, instance)
     doc.add_page_break()
+
+    # conclusions
+    doc.add_heading(f'Conclusions', level=2)
 
     # save the document
     save_doc(doc, week_name)

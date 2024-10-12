@@ -1,6 +1,8 @@
 import docx
 from docx.oxml.shared import OxmlElement
 from docx.oxml.ns import qn
+import pandas as pd
+
 def add_hyperlink(paragraph, text, url):
     # https://stackoverflow.com/questions/47666642/adding-an-hyperlink-in-msword-by-using-python-docx
     # This gets access to the document.xml.rels file and gets a new relation id value
@@ -110,3 +112,8 @@ def add_table(doc, summary_df):
     for i, row in summary_df.iterrows():
         for j, value in enumerate(row):
             table.cell(i + 1, j).text = str(value)
+
+def read_input(instance):
+    df = pd.read_csv(f"../../data/input/TSP{instance}.csv", header=None, delimiter=";")
+    df.columns = ['x', 'y', 'cost'] 
+    return df
