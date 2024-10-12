@@ -4,24 +4,10 @@ from docx import Document
 from docx.shared import Inches
 from read_solution_files import *
 from tables import *
+from utils import *
 from docx.shared import Pt
 from datetime import datetime
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-
-
-def add_table(doc, summary_df):
-    # Create a table with the number of rows equal to the length of the DataFrame plus one for the header
-    table = doc.add_table(rows=summary_df.shape[0] + 1, cols=len(summary_df.columns))
-
-    # Add the header row
-    hdr_cells = table.rows[0].cells
-    for i, column in enumerate(summary_df.columns):
-        hdr_cells[i].text = column
-
-    # Add the data rows
-    for i, row in summary_df.iterrows():
-        for j, value in enumerate(row):
-            table.cell(i + 1, j).text = str(value)
 
 def save_doc(doc, week_name):
     doc_path = f'../../reports/{week_name}.docx'
@@ -43,20 +29,56 @@ def create_summary_report(df, week_name):
     date_run.font.size = Pt(8) 
     date_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 
-    doc.add_heading(f'Summary Report for {week_name}', level=1)
+    # note
+    paragraph = doc.add_paragraph()
+    run = paragraph.add_run('Best solutions have been checked with the solution checker')
+    run.font.size = Pt(8) 
+    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
 
-    # Create summary statistics tables
+    doc.add_heading(f'Summary Report for {week_name}', level=1)
+    p = doc.add_paragraph('Based on methods from ')
+    add_hyperlink(p, 'our github project', f"https://github.com/wkzawadzka/evolutionary-computation/tree/master/src/java/src/main/java/evcomp/{week_name}")
+    insertHR(p)
+
+    # prepare sections
+    doc.add_heading(f'Problem description', level=2)
+    add_problem_description(doc)
+    doc.add_heading(f'Pseudocode of implemented algorithms', level=2)
+    doc.add_page_break()
+
+    # create summary statistics tables
+    doc.add_heading(f'Summary performance of each method', level=2)
+    p = doc.add_paragraph("")
+    insertHR(p)
     for instance in df['instance'].unique():
-        doc.add_heading(f'Instance: {instance}', level=2)
+        doc.add_heading(f'Instance: {instance}', level=3)
         variable_labels, summary_stats = create_summary_table(df, instance)
 
         for variable, summary_df in summary_stats.items():
-            doc.add_heading(f'Summary for {variable_labels[variable]}', level=3)
+            doc.add_heading(f'Summary for {variable_labels[variable]}', level=4)
             add_table(doc, summary_df)
+        
+        p = doc.add_paragraph("")
+        insertHR(p)
 
-        doc.add_page_break()
+    doc.add_page_break()
 
-    # Save the document
+    # 2D visualisations
+    doc.add_heading(f'2D visualisations of best solutions', level=2)
+    p = doc.add_paragraph("")
+    insertHR(p)
+    doc.add_page_break()
+
+    # printed solutions
+    doc.add_heading(f'Best solutions, indices', level=2)
+    p = doc.add_paragraph("")
+    insertHR(p)
+    for instance in df['instance'].unique():
+        doc.add_heading(f'Instance: {instance}', level=3)
+        print_solutions_with_highest_fval(doc, df, instance)
+    doc.add_page_break()
+
+    # save the document
     save_doc(doc, week_name)
 
 
@@ -67,5 +89,4 @@ if __name__ == "__main__":
 
     week_name = sys.argv[1]
     results = read_solution_files(week_name)
-
     create_summary_report(results, week_name)
