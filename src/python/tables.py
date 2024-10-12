@@ -3,7 +3,7 @@ def create_summary_table(df, instance):
     summary_stats = {}
 
     variable_labels = {
-        'time_taken': 'Execution Time (ns)',
+        'time_taken': 'Execution Time (ms)',
         # 'total_cost': 'Total Cost',
         # 'total_distance': 'Total Distance',
         'f_val': 'Objective Function Value'

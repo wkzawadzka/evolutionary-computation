@@ -39,11 +39,11 @@ public class RandomMethod {
 
         // Perform experiment
         for (int i = 1; i <= nExperiments; i++) {
-            long startTime = System.nanoTime(); 
+            long startTime = System.currentTimeMillis(); 
 
             List<Integer> randomSolution = generateRandomSolution(nodeList);
 
-            long timeTaken = System.nanoTime() - startTime;
+            long timeTaken = System.currentTimeMillis() - startTime;
 
             int totalCost = evaluator.calculateTotalCost(randomSolution, nodeList);
             int totalDistance = evaluator.calculateTotalDistance(randomSolution, distanceMatrix);
