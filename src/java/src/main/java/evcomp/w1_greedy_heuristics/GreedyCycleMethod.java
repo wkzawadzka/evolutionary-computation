@@ -54,48 +54,74 @@ public class GreedyCycleMethod {
         }
     }
 
-        private static List<Integer> generateGreedyCycleSolution(List<Node> nodeList, int[][] distanceMatrix) {
-            List<Integer> currPath = new ArrayList<>();
-            int totalNodes = nodeList.size();
-            int numberToSelect = totalNodes / 2; // Select 50% of nodes
-            
-            boolean[] visited = new boolean[totalNodes];
-    
-            // Start from the random node
-            int startNodeIndex = RANDOM.nextInt(totalNodes);
-            currPath.add(startNodeIndex); // path
-            visited[startNodeIndex] = true;
-            int lastNodeIndex = startNodeIndex; // curr end of path
-    
-            while (currPath.size() < numberToSelect) {
-                int bestNodeIndex = -1;
-                int bestIncrease = Integer.MAX_VALUE;
-        
-                for (int j = 0; j < totalNodes; j++) { // Check all nodes
-                    if (!visited[j]) {
-                        // calculate increase in obj. val if added 
-                        // last_node->new_node + cost(new_node) + new_node->fist_node (cycle)
-                        int costToNewNode = nodeList.get(j).getCost();
-                        int distanceToNewNode = distanceMatrix[lastNodeIndex][j];
-                        int distanceToFirstNode = distanceMatrix[j][currPath.get(0)]; // cycle
-        
-                        int increase = distanceToNewNode + costToNewNode + distanceToFirstNode;
-        
-                        // if lower, accept as new best candicate
+    private static List<Integer> generateGreedyCycleSolution(List<Node> nodeList, int[][] distanceMatrix) {
+        List<Integer> currCycle = new ArrayList<>();
+        int totalNodes = nodeList.size();
+        int numberToSelect = totalNodes / 2; // Select 50% of nodes
+
+        boolean[] visited = new boolean[totalNodes];
+
+        // Select randomly the starting vertex
+        int startNodeIndex = RANDOM.nextInt(totalNodes);
+        currCycle.add(startNodeIndex);
+        visited[startNodeIndex] = true;
+
+        // Choose the nearest vertex and create an incomplete cycle from these two vertices
+        int nearestNodeIndex = -1;
+        int nearestDistance = Integer.MAX_VALUE;
+        for (int j = 0; j < totalNodes; j++) {
+            if (!visited[j]) {
+                int distanceToNewNode = distanceMatrix[startNodeIndex][j];
+                if (distanceToNewNode < nearestDistance) {
+                    nearestDistance = distanceToNewNode;
+                    nearestNodeIndex = j;
+                }
+            }
+        }
+        // add it to currCycle
+        currCycle.add(nearestNodeIndex);
+        visited[nearestNodeIndex] = true;
+
+        // repeat
+        //  insert into the current cycle in the best possible place the vertex
+        //  causing the smallest increase in cycle length
+        // until all vertices have been added
+        while (currCycle.size() < numberToSelect) {
+            int bestNodeIndex = -1;
+            int bestIncrease = Integer.MAX_VALUE;
+            int bestPosition = -1;
+
+            // all unvisited nodes
+            for (int j = 0; j < totalNodes; j++) {
+                if (!visited[j]) {
+                    int newNode = j;
+
+                    // **every** position in the current cycle is possible place
+                    for (int pos = 0; pos < currCycle.size(); pos++) {
+                        int prevNode = currCycle.get(pos);
+                        int nextNode = currCycle.get((pos + 1) % currCycle.size()); 
+
+                        // the cost of inserting the new node between prevNode and nextNode
+                        int increase = distanceMatrix[prevNode][newNode] // A -> new
+                                     + distanceMatrix[newNode][nextNode] //  new -> B
+                                     - distanceMatrix[prevNode][nextNode] // remove previous A->B
+                                     + nodeList.get(newNode).getCost(); // cost of new node
+
                         if (increase < bestIncrease) {
                             bestIncrease = increase;
-                            bestNodeIndex = j;
+                            bestNodeIndex = newNode;
+                            bestPosition = pos + 1;
                         }
                     }
                 }
-        
-                // add to path
-                if (bestNodeIndex != -1) {
-                    currPath.add(bestNodeIndex);
-                    visited[bestNodeIndex] = true;
-                    lastNodeIndex = bestNodeIndex;
-                }
             }
-            return currPath;
+
+            // insert the best node found into the best position
+            if (bestNodeIndex != -1) {
+                currCycle.add(bestPosition, bestNodeIndex);
+                visited[bestNodeIndex] = true;
+            }
         }
+        return currCycle;
+    }
 }
