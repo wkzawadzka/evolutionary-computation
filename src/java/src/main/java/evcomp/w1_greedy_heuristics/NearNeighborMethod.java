@@ -5,6 +5,7 @@ import evcomp.utils.Node;
 import evcomp.utils.SolutionSaver;
 import evcomp.utils.Evaluator;
 import java.util.List;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -66,20 +67,24 @@ public class NearNeighborMethod {
         currPath.add(startNodeIndex); // path
         visited[startNodeIndex] = true;
 
+        //  looks for the nearest neighbor at each position in the current path during each iteration
         while (currPath.size() < numberToSelect) {
+            // Loop Over Current Path and Find the Nearest Neighbor:
+            // (looking at each position in the current path)
             for (int i=0; i<currPath.size(); i++){
                 while (currPath.size() < numberToSelect){
                     int currentNode = currPath.get(i);
                     int bestNodeIndex = -1;
-                    int nearestNode = Integer.MAX_VALUE;
+                    int lowestChangeObjVal = Integer.MAX_VALUE;
 
+                    // Find the Closest Unvisited Node
                     for (int j = 0; j < totalNodes; j++) { // Check all nodes
                         if (!visited[j]) {
-                            int distanceToNewNode = distanceMatrix[currentNode][j];
+                            int changeObjVal = distanceMatrix[currentNode][j] + nodeList.get(j).getCost();
 
                             // if lower, accept as new best candicate
-                            if (distanceToNewNode < nearestNode) {
-                                nearestNode = distanceToNewNode;
+                            if (changeObjVal < lowestChangeObjVal) {
+                                lowestChangeObjVal = changeObjVal;
                                 bestNodeIndex = j;
                             }
                         }

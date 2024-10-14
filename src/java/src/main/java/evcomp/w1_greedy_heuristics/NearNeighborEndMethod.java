@@ -69,15 +69,15 @@ public class NearNeighborEndMethod {
 
         while (currPath.size() < numberToSelect) {
             int bestNodeIndex = -1;
-            int nearestNode = Integer.MAX_VALUE;
+            int lowestChangeObjF = Integer.MAX_VALUE;
 
             for (int j = 0; j < totalNodes; j++) { // Check all nodes
                 if (!visited[j]) {
-                    int distanceToNewNode = distanceMatrix[lastNodeIndex][j];
+                    int changeObjF = distanceMatrix[lastNodeIndex][j] + nodeList.get(j).getCost();
 
                     // if lower, accept as new best candicate
-                    if (distanceToNewNode < nearestNode) {
-                        nearestNode = distanceToNewNode;
+                    if (changeObjF < lowestChangeObjF) {
+                        lowestChangeObjF = changeObjF;
                         bestNodeIndex = j;
                     }
                 }
