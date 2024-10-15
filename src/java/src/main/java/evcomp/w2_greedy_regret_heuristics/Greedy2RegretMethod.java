@@ -8,7 +8,11 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 
+// Greedy 2-regret heuristics
 public class Greedy2RegretMethod {
+    // 1. version
+    // regret - difference 2nd best position and best position (basic)
+    // take node with highest MAX regret MIN change(?)
     private static Random RANDOM;
 
     public static void main(String[] args) {
@@ -71,7 +75,7 @@ public class Greedy2RegretMethod {
         int nearestDistance = Integer.MAX_VALUE;
         for (int j = 0; j < totalNodes; j++) {
             if (!visited[j]) {
-                int distanceToNewNode = distanceMatrix[startNodeIndex][j];
+                int distanceToNewNode = distanceMatrix[startNodeIndex][j] + nodeList.get(j).getCost();
                 if (distanceToNewNode < nearestDistance) {
                     nearestDistance = distanceToNewNode;
                     nearestNodeIndex = j;
@@ -87,11 +91,13 @@ public class Greedy2RegretMethod {
         //  causing the smallest increase in cycle length
         // until all vertices have been added
         while (currCycle.size() < numberToSelect) {
+            // best position
             int bestNode1Index = -1;
             int best1Increase = Integer.MAX_VALUE;
             int best1Position = -1;
             int increase1Change = Integer.MAX_VALUE;
 
+            // second best position
             int bestNode2Index = -1;
             int best2Increase = Integer.MAX_VALUE;
             int best2Position = -1;
@@ -124,7 +130,7 @@ public class Greedy2RegretMethod {
                             secondInc = increase;
                         }
                     }
-                    int change = secondInc-bestInc;
+                    int regret = secondInc-bestInc;
                     if (bestInc<best1Increase){
                         bestNode2Index = bestNode1Index;
                         best2Increase = best1Increase;
@@ -133,12 +139,12 @@ public class Greedy2RegretMethod {
                         bestNode1Index = j;
                         best1Increase = bestInc;
                         best1Position = bestPlace;
-                        increase1Change = change;
+                        increase1Change = regret;
                     } else if (bestInc<best2Increase) {
                         bestNode2Index = j;
                         best2Increase = bestInc;
                         best2Position = bestPlace;
-                        increase2Change = change;
+                        increase2Change = regret;
                     }
                 }
             }
