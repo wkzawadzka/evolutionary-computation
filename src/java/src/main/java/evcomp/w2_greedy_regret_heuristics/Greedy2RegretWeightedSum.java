@@ -15,8 +15,9 @@ public class Greedy2RegretWeightedSum {
     // weight greedy criterion - change to obj. with regret (take into accound - invert the sign 
     // of the weight e..g of regret, take it with minus, and select min sum of best change of 
     // inverted regret)
-    private static double regretWeight = -1.0; // Weight for regret, negative sign as specified
-    private static double greedyWeight = 1.0;  // Weight for objective function (greedy)
+    // private static double regretWeight = -1.0; // Weight for regret, negative sign as specified
+    // private static double greedyWeight = 1.0;  // Weight for objective function (greedy)
+    private static double weight = 0.5;
     private static Random RANDOM;
 
     public static void main(String[] args) {
@@ -127,8 +128,8 @@ public class Greedy2RegretWeightedSum {
                     int regret = secondInc - bestInc;
 
                     // weighted sum: objective function (greedy) + regret (weighted)
-                    double weightedSum = greedyWeight * bestInc + regretWeight * regret;
-
+                    // bestInc is objective func val
+                    double weightedSum = (1-weight) * bestInc + weight * (-1.0 * regret);
                     // Select the node with the smallest weighted sum
                     if (weightedSum < bestWeightedSum) {
                         bestNodeIndex = newNode;
