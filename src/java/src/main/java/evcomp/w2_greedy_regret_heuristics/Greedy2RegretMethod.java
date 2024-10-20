@@ -95,13 +95,8 @@ public class Greedy2RegretMethod {
             int bestNode1Index = -1;
             int best1Increase = Integer.MAX_VALUE;
             int best1Position = -1;
-            int increase1Change = Integer.MAX_VALUE;
+            int increase1Change = -1;
 
-            // second best position
-            int bestNode2Index = -1;
-            int best2Increase = Integer.MAX_VALUE;
-            int best2Position = -1;
-            int increase2Change = Integer.MAX_VALUE;
 
             // all unvisited nodes
             for (int j = 0; j < totalNodes; j++) {
@@ -131,32 +126,19 @@ public class Greedy2RegretMethod {
                         }
                     }
                     int regret = secondInc-bestInc;
-                    if (bestInc<best1Increase){
-                        bestNode2Index = bestNode1Index;
-                        best2Increase = best1Increase;
-                        best2Position = best1Position;
-                        increase2Change = increase1Change;
+                    if (regret>increase1Change){
                         bestNode1Index = j;
                         best1Increase = bestInc;
                         best1Position = bestPlace;
                         increase1Change = regret;
-                    } else if (bestInc<best2Increase) {
-                        bestNode2Index = j;
-                        best2Increase = bestInc;
-                        best2Position = bestPlace;
-                        increase2Change = regret;
                     }
                 }
             }
 
             // insert the best node found into the best position
-            if (increase1Change<increase2Change) {
-                currCycle.add(best2Position, bestNode2Index);
-                visited[bestNode2Index] = true;
-            } else {
-                currCycle.add(best1Position, bestNode1Index);
-                visited[bestNode1Index] = true;
-            }
+            currCycle.add(best1Position, bestNode1Index);
+            visited[bestNode1Index] = true;
+
         }
         return currCycle;
     }
