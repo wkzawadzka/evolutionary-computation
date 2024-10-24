@@ -63,10 +63,11 @@ public class Greedy2RegretWeightedSum {
         }
     }
 
-    private static List<Integer> generateGreedy2RegretWeightedSumSolution(List<Node> nodeList, int[][] distanceMatrix) {
+    public static List<Integer> generateGreedy2RegretWeightedSumSolution(List<Node> nodeList, int[][] distanceMatrix) {
         List<Integer> currCycle = new ArrayList<>();
         int totalNodes = nodeList.size();
         int numberToSelect = totalNodes / 2; // Select 50% of nodes
+        RANDOM = new Random(222);
 
         boolean[] visited = new boolean[totalNodes];
 
