@@ -1,6 +1,13 @@
 import os
 import pandas as pd
 
+def list_previous_weeks(curr_week, directory="../../data/method_outputs/"):
+    week_id = int(curr_week[1])
+    entries = os.listdir(directory)
+    folders = [entry for entry in entries if os.path.isdir(os.path.join(directory, entry))]
+    addon_weeks = [week for week in folders if int(week[1])<week_id]
+    return addon_weeks
+
 def read_solution_files(week_name):
     base_path = f"../../data/method_outputs/{week_name}"
     if not os.path.exists(base_path):

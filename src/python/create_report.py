@@ -1,5 +1,6 @@
 import pandas as pd
 import sys
+import argparse
 from docx import Document
 from docx.shared import Inches
 from read_solution_files import *
@@ -15,7 +16,7 @@ def save_doc(doc, week_name):
     doc.save(doc_path)
     print(f"Summary report saved to '{doc_path}'.")
 
-def create_summary_report(df, week_name, type='separate'):
+def create_summary_report(df, week_name, type='separate', addonDf=None):
     # type: separate or integrative
     doc = Document()
 
@@ -49,13 +50,14 @@ def create_summary_report(df, week_name, type='separate'):
     doc.add_page_break()
 
     # create summary statistics tables
+    dfTemp = pd.concat([df, addonDf], ignore_index=True) if addonDf is not None else df
     doc.add_heading(f'Summary performance of each method', level=2)
     p = doc.add_paragraph("")
     insertHR(p)
     if type == 'separate':
-        for instance in df['instance'].unique():
+        for instance in dfTemp['instance'].unique():
             doc.add_heading(f'Instance: {instance}', level=3)
-            variable_labels, summary_stats = create_summary_table(df, instance)
+            variable_labels, summary_stats = create_summary_table(dfTemp, instance)
 
             for variable, summary_df in summary_stats.items():
                 doc.add_heading(f'Summary for {variable_labels[variable]}', level=4)
@@ -64,7 +66,7 @@ def create_summary_report(df, week_name, type='separate'):
             p = doc.add_paragraph("")
             insertHR(p)
     else:
-        variable_labels, summary_stats = create_intergative_summary_table(df)
+        variable_labels, summary_stats = create_intergative_summary_table(dfTemp)
         for variable, summary_df in summary_stats.items():
             doc.add_heading(f'Summary for {variable_labels[variable]}', level=4)
             add_table(doc, summary_df, type='integrative')
@@ -101,16 +103,35 @@ def create_summary_report(df, week_name, type='separate'):
     save_doc(doc, week_name)
 
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python create_report.py <week_name> <type=separate> \n e.g. python create_report.py w1_greedy_heuristics")
-        sys.exit(1)
+def main(week_name, report_type, addon):
+    print(f"Week Name: {week_name}")
+    print(f"Report Type: {report_type}")
+    print(f"Addon: {addon}")
 
-    week_name = sys.argv[1]
-    if len(sys.argv) > 2:
-        report_type = sys.argv[2]
-    else:
-        report_type = "separate"
-
+    addonDf = None
     results = read_solution_files(week_name)
-    create_summary_report(results, week_name, report_type)
+    if addon=="yes":
+        addon_weeks = list_previous_weeks(week_name)
+        addonDf = [] 
+        for week in addon_weeks:
+            addonDf.append(read_solution_files(week))
+        addonDf = pd.concat(addonDf, ignore_index=True)
+    
+    create_summary_report(results, week_name, report_type, addonDf)
+          
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Create a report based on the provided week name and options.')
+    
+    parser.add_argument('week_name', type=str, help='Name of the week (e.g., w3_local_search)')
+    
+    parser.add_argument('--type', type=str, default='separate', 
+                        help='Type of report: separate/integrative (default: "separate")')
+    
+    parser.add_argument('--addon', type=str, default='no', 
+                        help='Whether to include previous methods (default: "no")')
+
+    args = parser.parse_args()
+    main(args.week_name, args.type, args.addon)
+
+
