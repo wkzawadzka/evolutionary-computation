@@ -2,6 +2,8 @@ import docx
 from docx.oxml.shared import OxmlElement
 from docx.oxml.ns import qn
 import pandas as pd
+from docx.shared import Pt
+from docx import Document
 
 def add_hyperlink(paragraph, text, url):
     # https://stackoverflow.com/questions/47666642/adding-an-hyperlink-in-msword-by-using-python-docx
@@ -107,9 +109,14 @@ def add_table(doc, summary_df, type='separate'):
     else:
         table = doc.add_table(rows=num_methods + 1, cols=num_instances + 1)
 
-    # Add the header row
+    # Add the column header row
     hdr_cells = table.rows[0].cells
     hdr_cells[0].text = 'Method'
+    run = hdr_cells[0].paragraphs[0].runs[0]
+    run.font.bold = True
+    run.font.size = Pt(10)
+
+    # Row headers
     for i, column in enumerate(summary_df.columns):
         if type=='separate':
             hdr_cells[i].text = str(column)
@@ -118,6 +125,7 @@ def add_table(doc, summary_df, type='separate'):
             hdr_cells[i + 1].text = str(column)
             run = hdr_cells[i + 1].paragraphs[0].runs[0]
         run.font.bold = True
+        run.font.size = Pt(10)
 
     # Add the data rows
     if type=='separate':
@@ -130,8 +138,14 @@ def add_table(doc, summary_df, type='separate'):
             table.cell(i + 1, 0).text = method
             for j in range(num_instances):
                 value = summary_df.loc[method].values[j]
-                table.cell(i + 1, j+1).text = str(value) if value is not None else ''  # +1 to shift over
-
+                cell = table.cell(i + 1, j + 1)
+                cell.text = str(value) if value is not None else ''
+                # set font size
+                for paragraph in cell.paragraphs:
+                    for run in paragraph.runs:
+                        run.font.size = Pt(10)  
+                    # set line spacing
+                    paragraph.paragraph_format.line_spacing = 1.0
 
 def read_input(instance):
     df = pd.read_csv(f"../../data/input/TSP{instance}.csv", header=None, delimiter=";")

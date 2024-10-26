@@ -10,10 +10,9 @@ def generate_visualizations(doc, df, instance):
     grouped = df_subset.groupby('method')  # Group by method
 
     for method, group in grouped:
-        doc.add_heading(f"Method: {method}", level=4)
         # best_sol -> lowest f_val
         min_fval_row = group.loc[group['f_val'].idxmin()]
-        doc.add_paragraph(f"Obj.f. value: {min_fval_row['f_val']}")
+        doc.add_heading(f"Method: {method} with score={min_fval_row['f_val']}", level=4)
         solution_indices = min_fval_row['solution']
 
         problem_subset = problem.iloc[solution_indices]
@@ -68,6 +67,6 @@ def generate_visualizations(doc, df, instance):
         # Save to doc
         memfile = BytesIO()
         plt.savefig(memfile)
-        doc.add_picture(memfile, width=Inches(5))
+        doc.add_picture(memfile, width=Inches(4.5))
         doc.add_paragraph()
         memfile.close()
