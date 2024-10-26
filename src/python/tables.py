@@ -14,6 +14,9 @@ def create_summary_table(df, instance):
         grouped = df_subset.groupby(['method'])[variable].agg(['min', 'max', 'mean']).reset_index()
         grouped.columns = ['method', 'min', 'max', 'mean']
 
+        # Sort by the 'min' value
+        grouped = grouped.sort_values(by='min').reset_index(drop=True)
+
         summary_stats[variable] = grouped
 
     return variable_labels, summary_stats
