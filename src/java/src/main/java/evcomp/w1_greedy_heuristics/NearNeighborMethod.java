@@ -5,7 +5,6 @@ import evcomp.utils.Node;
 import evcomp.utils.SolutionSaver;
 import evcomp.utils.Evaluator;
 import java.util.List;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Random;
 

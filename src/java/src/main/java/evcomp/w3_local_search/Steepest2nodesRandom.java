@@ -67,14 +67,15 @@ public class Steepest2nodesRandom {
         }
 
         // Shuffle the IDs using the seeded random instance
+        // Random initial solution:
         java.util.Collections.shuffle(ids, RANDOM);
         for (int i = 0; i < numberToSelect; i++) {
             selectedIds.add(ids.get(i));
         }
 
         int selectedCost = eval.calculateTotalCost(selectedIds, nodeList) + eval.calculateTotalDistance(selectedIds, distanceMatrix);
-        System.out.println(selectedIds);
-        System.out.println(selectedCost);
+        // System.out.println(selectedIds);
+        // System.out.println(selectedCost);
 
         boolean go = true;
         while(go){
@@ -98,8 +99,9 @@ public class Steepest2nodesRandom {
                     }
                 }
             }
-            System.out.println(bestchange);
+            //System.out.println(bestchange);
 
+            // Steepest:
             if (bestchange<selectedCost){
                 selectedIds = bestsol;
                 selectedCost = bestchange;

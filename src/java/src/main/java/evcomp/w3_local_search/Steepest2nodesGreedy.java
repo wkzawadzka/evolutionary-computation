@@ -10,10 +10,8 @@ import evcomp.w2_greedy_regret_heuristics.Greedy2RegretWeightedSum;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class Steepest2nodesGreedy {
-    private static Random RANDOM;
     public static void main(String[] args) {
         // Args
         if (args.length != 2) {
@@ -28,9 +26,6 @@ public class Steepest2nodesGreedy {
             System.out.println("Error: n_experiments must be an integer.");
             return;
         }
-
-        // Initialize the Random instance with the seed
-        RANDOM = new Random(222);
 
         // Initialize InputGenerator with given instance
         InputGenerator inputGenerator = new InputGenerator(instance);
@@ -71,8 +66,8 @@ public class Steepest2nodesGreedy {
 
 
         int selectedCost = eval.calculateTotalCost(selectedIds, nodeList) + eval.calculateTotalDistance(selectedIds, distanceMatrix);
-        System.out.println(selectedIds);
-        System.out.println(selectedCost);
+        // System.out.println(selectedIds);
+        // System.out.println(selectedCost);
 
         boolean go = true;
         while(go){
@@ -96,7 +91,7 @@ public class Steepest2nodesGreedy {
                     }
                 }
             }
-            System.out.println(bestchange);
+            //System.out.println(bestchange);
 
             if (bestchange<selectedCost){
                 selectedIds = bestsol;

@@ -61,21 +61,23 @@ public class Greedy2nodesRandom {
         int totalNodes = nodeList.size();
         int numberToSelect = totalNodes / 2; // Select 50%
 
-        // Create a list of node IDs to choose from
+        // Create a list of node IDs to choose from -> ALL
         List<Integer> ids = new ArrayList<>();
         for (Node node : nodeList) {
             ids.add(node.getId());
         }
 
         // Shuffle the IDs using the seeded random instance
+        // => Typ początkowego rozwiązania: Losowe rozwiązanie początkowe
         java.util.Collections.shuffle(ids, RANDOM);
-        for (int i = 0; i < numberToSelect; i++) {
+        for (int i = 0; i < numberToSelect; i++) { // -> 50%
             selectedIds.add(ids.get(i));
         }
 
+        // Evaluate starting solution
         int selectedCost = eval.calculateTotalCost(selectedIds, nodeList) + eval.calculateTotalDistance(selectedIds, distanceMatrix);
-        System.out.println(selectedIds);
-        System.out.println(selectedCost);
+        // System.out.println(selectedIds);
+        // System.out.println(selectedCost);
         int lastCost = -1;
 
         boolean go = true;
@@ -86,15 +88,15 @@ public class Greedy2nodesRandom {
             java.util.Collections.shuffle(shortList, RANDOM);
 
             findBetter:
-            for (int i = 0; i < numberToSelect; i++){
-                for (int j = 0; j < totalNodes; j++){
+            for (int i = 0; i < numberToSelect; i++){ // 50% (shortList)
+                for (int j = 0; j < totalNodes; j++){  // ALL (longList)
                     int idi = selectedIds.indexOf(shortList.get(i));
                     int idj = ids.indexOf(longList.get(j));
                     List<Integer> swapped = new ArrayList<>(selectedIds);
-                    if (!selectedIds.contains(idj)){
+                    if (!selectedIds.contains(idj)){ // inter
                         swapped.set(idi, idj);
                     }
-                    else{
+                    else{ // intra (inside selectedIds)
                         Collections.swap(swapped, idi, selectedIds.indexOf(idj));
                     }
 
@@ -103,7 +105,7 @@ public class Greedy2nodesRandom {
                         selectedIds = swapped;
                         lastCost = selectedCost;
                         selectedCost = change;
-                        break findBetter;
+                        break findBetter; // Greedily accept
                     }
                 }
             }
@@ -111,7 +113,7 @@ public class Greedy2nodesRandom {
                 go = false;
             }
             else{
-                System.out.println(selectedCost);
+                //System.out.println(selectedCost);
                 lastCost = selectedCost;
             }
 

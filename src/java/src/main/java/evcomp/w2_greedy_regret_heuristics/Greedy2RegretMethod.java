@@ -93,7 +93,6 @@ public class Greedy2RegretMethod {
         while (currCycle.size() < numberToSelect) {
             // best position
             int bestNode1Index = -1;
-            int best1Increase = Integer.MAX_VALUE;
             int best1Position = -1;
             int increase1Change = -1;
 
@@ -128,7 +127,6 @@ public class Greedy2RegretMethod {
                     int regret = secondInc-bestInc;
                     if (regret>increase1Change){
                         bestNode1Index = j;
-                        best1Increase = bestInc;
                         best1Position = bestPlace;
                         increase1Change = regret;
                     }

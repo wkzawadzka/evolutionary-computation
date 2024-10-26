@@ -4,19 +4,18 @@ import evcomp.utils.Evaluator;
 import evcomp.utils.InputGenerator;
 import evcomp.utils.Node;
 import evcomp.utils.SolutionSaver;
-import evcomp.w2_greedy_regret_heuristics.Greedy2RegretWeightedSum;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class Greedy2nodesGreedy {
+public class Greedy2edgesRandom {
     private static Random RANDOM;
     public static void main(String[] args) {
         // Args
         if (args.length != 2) {
-            System.out.println("Usage: java Greedy2nodesGreedy <instance> <n_experiments>");
+            System.out.println("Usage: java Greedy2edgesRandom <instance> <n_experiments>");
             return;
         }
         String instance = args[0];
@@ -37,39 +36,44 @@ public class Greedy2nodesGreedy {
         int[][] distanceMatrix = inputGenerator.getDistanceMatrix();
         List<Node> nodeList = inputGenerator.getNodeList();
 
-        SolutionSaver solutionSaver = new SolutionSaver("w3_local_search", "Greedy2nodesGreedy", instance);
+        SolutionSaver solutionSaver = new SolutionSaver("w3_local_search", "Greedy2edgesRandom", instance);
         Evaluator evaluator = new Evaluator();
-
 
         // Perform experiment
         for (int i = 1; i <= nExperiments; i++) {
             long startTime = System.currentTimeMillis();
 
-            List<Integer> bestStart = Greedy2RegretWeightedSum.generateGreedy2RegretWeightedSumSolution(nodeList, distanceMatrix);
-            List<Integer> greedySolution = generateGreedy2nodesGreedy(nodeList, distanceMatrix, evaluator, bestStart);
+            List<Integer> randomSolution = generateGreedy2edgesRandom(nodeList, distanceMatrix, evaluator);
 
             long timeTaken = System.currentTimeMillis() - startTime;
 
-            int totalCost = evaluator.calculateTotalCost(greedySolution, nodeList);
-            int totalDistance = evaluator.calculateTotalDistance(greedySolution, distanceMatrix);
+            int totalCost = evaluator.calculateTotalCost(randomSolution, nodeList);
+            int totalDistance = evaluator.calculateTotalDistance(randomSolution, distanceMatrix);
             int objFuncValue = evaluator.calculateObjectiveFunction(totalCost, totalDistance);
 
-            solutionSaver.saveSolution(greedySolution, i, timeTaken, totalCost, totalDistance, objFuncValue);
+            solutionSaver.saveSolution(randomSolution, i, timeTaken, totalCost, totalDistance, objFuncValue);
         }
 
     }
-    private static List<Integer> generateGreedy2nodesGreedy(List<Node> nodeList, int[][] distanceMatrix, Evaluator eval, List<Integer> start) {
-        List<Integer> selectedIds = new ArrayList<>(start);
+    private static List<Integer> generateGreedy2edgesRandom(List<Node> nodeList, int[][] distanceMatrix, Evaluator eval) {
+        List<Integer> selectedIds = new ArrayList<>();
         int totalNodes = nodeList.size();
         int numberToSelect = totalNodes / 2; // Select 50%
 
-        // Create a list of node IDs to choose from
+        // Create a list of node IDs to choose from -> ALL
         List<Integer> ids = new ArrayList<>();
         for (Node node : nodeList) {
             ids.add(node.getId());
         }
 
+        // Shuffle the IDs using the seeded random instance
+        // => Typ początkowego rozwiązania: Losowe rozwiązanie początkowe
+        java.util.Collections.shuffle(ids, RANDOM);
+        for (int i = 0; i < numberToSelect; i++) { // -> 50%
+            selectedIds.add(ids.get(i));
+        }
 
+        // Evaluate starting solution
         int selectedCost = eval.calculateTotalCost(selectedIds, nodeList) + eval.calculateTotalDistance(selectedIds, distanceMatrix);
         // System.out.println(selectedIds);
         // System.out.println(selectedCost);
@@ -83,16 +87,25 @@ public class Greedy2nodesGreedy {
             java.util.Collections.shuffle(shortList, RANDOM);
 
             findBetter:
-            for (int i = 0; i < numberToSelect; i++){
-                for (int j = 0; j < totalNodes; j++){
+            for (int i = 0; i < numberToSelect; i++){ // 50% (shortList)
+                for (int j = 0; j < totalNodes; j++){  // ALL (longList)
                     int idi = selectedIds.indexOf(shortList.get(i));
                     int idj = ids.indexOf(longList.get(j));
                     List<Integer> swapped = new ArrayList<>(selectedIds);
-                    if (!selectedIds.contains(idj)){
+                    if (!selectedIds.contains(idj)){ // inter
                         swapped.set(idi, idj);
                     }
-                    else{
-                        Collections.swap(swapped, idi, selectedIds.indexOf(idj));
+                    else{ // intra - 2 edges
+                        int indexIdj = selectedIds.indexOf(idj);
+                        // if next to each other - no
+                        if (Math.abs(idi - indexIdj) == 1) {
+                            continue; 
+                        }
+                        int start = Math.min(idi, indexIdj);
+                        int end = Math.max(idi, indexIdj);
+                        
+                        List<Integer> sublist = swapped.subList(start, end + 1);
+                        Collections.reverse(sublist);
                     }
 
                     int change = eval.calculateTotalCost(swapped, nodeList) + eval.calculateTotalDistance(swapped, distanceMatrix);
@@ -100,7 +113,7 @@ public class Greedy2nodesGreedy {
                         selectedIds = swapped;
                         lastCost = selectedCost;
                         selectedCost = change;
-                        break findBetter;
+                        break findBetter; // Greedily accept
                     }
                 }
             }
@@ -117,3 +130,4 @@ public class Greedy2nodesGreedy {
         return selectedIds;
     }
 }
+
