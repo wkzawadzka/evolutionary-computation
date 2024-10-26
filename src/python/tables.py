@@ -1,3 +1,4 @@
+
 def create_summary_table(df, instance):
     df_subset = df[df['instance'] == instance] 
     summary_stats = {}
@@ -21,6 +22,29 @@ def create_summary_table(df, instance):
 
     return variable_labels, summary_stats
 
+def create_intergative_summary_table(df):
+    variable_labels = {
+        'time_taken': 'Execution Time (ms)',
+        # 'total_cost': 'Total Cost',
+        # 'total_distance': 'Total Distance',
+        'f_val': 'Objective Function Value'
+    }
+
+    summary_stats = {}
+
+    for variable, label in variable_labels.items():
+        grouped = df.groupby(['method', 'instance'])[variable].agg(['min', 'max', 'mean']).reset_index()
+        grouped.columns = ['method', 'instance', 'min', 'max', 'mean']
+        grouped = grouped.sort_values(by='min').reset_index(drop=True)
+        grouped['val'] = grouped['mean'].astype(str) + ' (' + grouped['min'].astype(str) + ' - ' + grouped['max'].astype(str) + ')'
+
+        # methods as rows and instances as columns
+        pivot_table = grouped.pivot(index='method', columns='instance', values='val')
+
+        summary_stats[variable] = pivot_table
+
+
+    return variable_labels, summary_stats
 
 def print_solutions_with_lowest_fval(doc, df, instance):
     df_subset = df[df['instance'] == instance]

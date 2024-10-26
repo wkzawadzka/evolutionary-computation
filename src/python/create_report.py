@@ -15,7 +15,8 @@ def save_doc(doc, week_name):
     doc.save(doc_path)
     print(f"Summary report saved to '{doc_path}'.")
 
-def create_summary_report(df, week_name):
+def create_summary_report(df, week_name, type='separate'):
+    # type: separate or integrative
     doc = Document()
 
     # authors
@@ -51,13 +52,22 @@ def create_summary_report(df, week_name):
     doc.add_heading(f'Summary performance of each method', level=2)
     p = doc.add_paragraph("")
     insertHR(p)
-    for instance in df['instance'].unique():
-        doc.add_heading(f'Instance: {instance}', level=3)
-        variable_labels, summary_stats = create_summary_table(df, instance)
+    if type == 'separate':
+        for instance in df['instance'].unique():
+            doc.add_heading(f'Instance: {instance}', level=3)
+            variable_labels, summary_stats = create_summary_table(df, instance)
 
+            for variable, summary_df in summary_stats.items():
+                doc.add_heading(f'Summary for {variable_labels[variable]}', level=4)
+                add_table(doc, summary_df)
+            
+            p = doc.add_paragraph("")
+            insertHR(p)
+    else:
+        variable_labels, summary_stats = create_intergative_summary_table(df)
         for variable, summary_df in summary_stats.items():
             doc.add_heading(f'Summary for {variable_labels[variable]}', level=4)
-            add_table(doc, summary_df)
+            add_table(doc, summary_df, type='integrative')
         
         p = doc.add_paragraph("")
         insertHR(p)
@@ -92,10 +102,15 @@ def create_summary_report(df, week_name):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python create_report.py <week_name> \n e.g. python create_report.py w1_greedy_heuristics")
+    if len(sys.argv) < 2:
+        print("Usage: python create_report.py <week_name> <type=separate> \n e.g. python create_report.py w1_greedy_heuristics")
         sys.exit(1)
 
     week_name = sys.argv[1]
+    if len(sys.argv) > 2:
+        report_type = sys.argv[2]
+    else:
+        report_type = "separate"
+
     results = read_solution_files(week_name)
-    create_summary_report(results, week_name)
+    create_summary_report(results, week_name, report_type)

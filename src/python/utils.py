@@ -97,21 +97,41 @@ def add_problem_description(doc):
 
     p = doc.add_paragraph(desc)
 
-def add_table(doc, summary_df):
+def add_table(doc, summary_df, type='separate'):
+    num_methods = summary_df.shape[0]  # Number of methods (rows)
+    num_instances = summary_df.shape[1]  # Number of instances (columns)
+
     # Create a table with the number of rows equal to the length of the DataFrame plus one for the header
-    table = doc.add_table(rows=summary_df.shape[0] + 1, cols=len(summary_df.columns))
+    if type == 'separate':
+        table = doc.add_table(rows=summary_df.shape[0] + 1, cols=len(summary_df.columns))
+    else:
+        table = doc.add_table(rows=num_methods + 1, cols=num_instances + 1)
 
     # Add the header row
     hdr_cells = table.rows[0].cells
+    hdr_cells[0].text = 'Method'
     for i, column in enumerate(summary_df.columns):
-        hdr_cells[i].text = column
-        run = hdr_cells[i].paragraphs[0].runs[0]
+        if type=='separate':
+            hdr_cells[i].text = str(column)
+            run = hdr_cells[i].paragraphs[0].runs[0]
+        else:
+            hdr_cells[i + 1].text = str(column)
+            run = hdr_cells[i + 1].paragraphs[0].runs[0]
         run.font.bold = True
 
     # Add the data rows
-    for i, row in summary_df.iterrows():
-        for j, value in enumerate(row):
-            table.cell(i + 1, j).text = str(value)
+    if type=='separate':
+        for i, row in summary_df.iterrows():
+            for j, value in enumerate(row):
+                table.cell(i + 1, j).text = str(value) if value is not None else ''
+    else:
+        num_instances = summary_df.shape[1]
+        for i, method in enumerate(summary_df.index):
+            table.cell(i + 1, 0).text = method
+            for j in range(num_instances):
+                value = summary_df.loc[method].values[j]
+                table.cell(i + 1, j+1).text = str(value) if value is not None else ''  # +1 to shift over
+
 
 def read_input(instance):
     df = pd.read_csv(f"../../data/input/TSP{instance}.csv", header=None, delimiter=";")
