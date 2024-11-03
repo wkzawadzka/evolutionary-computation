@@ -74,7 +74,8 @@ public class Steepest2edgesCandidate {
             selectedIds.add(ids.get(i));
         }
 
-        //create matrix of 10 closest neighbors for each node
+        // create matrix of 10 closest neighbors for each node
+        // done just once, at the start
         int[][] candidates = new int[totalNodes][10];
         for (int i = 0; i < totalNodes; i++) {
             List<NodeDistance> distances = new ArrayList<>();
@@ -87,7 +88,7 @@ public class Steepest2edgesCandidate {
             }
             distances.sort(Comparator.comparingDouble(NodeDistance::getTotalDistance));
 
-            // Add the 10 closest nodes to the matrix
+            // add the 10 closest nodes to the matrix
             for (int k = 0; k < 10; k++) {
                 candidates[i][k] = distances.get(k).getNodeId();
             }
@@ -98,112 +99,81 @@ public class Steepest2edgesCandidate {
             List<Integer> bestsol = new ArrayList<>();
             int bestchange = 0;
             int change = 0;
-            for (int i = 0; i < numberToSelect; i++){
-                for (int j = 0; j < 10; j++){
-                    int idi = selectedIds.get(i);
-                    int idj = candidates[idi][j];
+            for (int i = 0; i < numberToSelect; i++){ // for each node in curr solution
+                for (int j = 0; j < 10; j++){ // for each candidate in candidate moves of given node
 
+                    int idi = selectedIds.get(i); // curr node
+                    int idj = candidates[idi][j]; // candidate j
+
+                    // if candidate not in current solution then do:
                     if (!selectedIds.contains(idj)){
-                        int prev = -1;
-                        int prev2 = -1;
-                        if (i != 0) {
-                            prev = selectedIds.get(i - 1);
-                            if (i!=1){
-                                prev2 = selectedIds.get(i - 2);
-                            }
-                            else{
-                                prev2 = selectedIds.get(numberToSelect-1);
-                            }
-                        }
-                        else {
-                            prev = selectedIds.get(numberToSelect-1);
-                            prev2 = selectedIds.get(numberToSelect-2);
-                        }
-                        int increase1 = distanceMatrix[idi][idj] // A -> new
-                                + distanceMatrix[idj][prev2] //  new -> B
-                                - distanceMatrix[idi][prev] // remove previous A->B
-                                - distanceMatrix[prev][prev2]
-                                - nodeList.get(prev).getCost()
-                                + nodeList.get(idj).getCost();
-
-
-                        int next = selectedIds.get((i+1)%(numberToSelect-1));
-                        int next2 = selectedIds.get((i+2)%(numberToSelect-1));
-                        int increase2 = distanceMatrix[idi][idj] // A -> new
-                                + distanceMatrix[idj][next2] //  new -> B
-                                - distanceMatrix[idi][next] // remove previous A->B
-                                - distanceMatrix[next][next2]
-                                - nodeList.get(next).getCost()
-                                + nodeList.get(idj).getCost();
-
+                        // 2 node swap: so that candidate now becomes neihgbour of curr node:
+                        int prev = selectedIds.get((i - 1 + numberToSelect) % numberToSelect);  // previous node
+                        int prev2 = selectedIds.get((i - 2 + numberToSelect) % numberToSelect); // second previous node
+                        int next = selectedIds.get((i + 1) % numberToSelect); // next node
+                        int next2 = selectedIds.get((i + 2) % numberToSelect); // second next node
+                        
+                        // move1: -1 -> behind
+                        int oldF = distanceMatrix[idi][prev] + distanceMatrix[prev][prev2] + nodeList.get(prev).getCost();
+                        int newF = distanceMatrix[idi][idj] + distanceMatrix[idj][prev2] + nodeList.get(idj).getCost();
+                        int increase1 = newF - oldF;
                         if (increase1 < bestchange) {
                             List<Integer> swapped = new ArrayList<>(selectedIds);
-                            if (i==0){
-                                swapped.set(numberToSelect-1, idj);
-                            } else{
-                                swapped.set(i-1, idj);
-                            }
+                            swapped.set((i - 1 + numberToSelect) % numberToSelect, idj); 
                             bestsol = swapped;
                             bestchange = increase1;
                             change = 1;
                         }
+
+                        // move2: +1 -> in front of
+                        int oldF2 = distanceMatrix[idi][next] + distanceMatrix[next][next2] + nodeList.get(next).getCost();
+                        int newF2 = distanceMatrix[idi][idj] + distanceMatrix[idj][next2] + nodeList.get(idj).getCost();
+                        int increase2 = newF2 - oldF2;
                         if (increase2 < bestchange) {
                             List<Integer> swapped = new ArrayList<>(selectedIds);
-                            swapped.set((i+1)%(numberToSelect-1), idj);
+                            swapped.set((i + 1)%(numberToSelect), idj);
                             bestsol = swapped;
                             bestchange = increase2;
                             change = 2;
                         }
                     }
-                    else{ // intra - 2 edges
+                    // if candidate in current solution then do:
+                    else{ 
+                        // intra - 2 edges swap
+                        // so that candidate now becomes neihgbour of curr node:
                         int indexIdj = selectedIds.indexOf(idj);
-                        int start_ = Math.min(i, indexIdj);
-                        int end = Math.max(i, indexIdj);
-                        // if next to each other - no
-                        if (Math.abs(i - indexIdj) == 1) {
+                        int start_ = Math.min(i, indexIdj); // smaller out of currNode & candidate
+                        int end = Math.max(i, indexIdj); // larger out of currNode & candidate
+                        // if already neighbours then skip
+                        if (Math.abs(i - indexIdj) <= 1 || (start_ == 0 && end == numberToSelect - 1)) {
                             continue;
-                        }
-                        if (start_==0 & end == numberToSelect-1){
-                            continue;
-                        }
-                        int nexti, previ, nextj, prevj;
-                        nexti = selectedIds.get((i+1)%(numberToSelect-1));
-                        nextj = selectedIds.get((indexIdj+1)%(numberToSelect-1));
-                        if (i != 0) {
-                            previ = selectedIds.get(i - 1);
-                        }
-                        else {
-                            previ = selectedIds.get(numberToSelect-1);
-                        }
-                        if (indexIdj != 0) {
-                            prevj = selectedIds.get(indexIdj - 1);
-                        }
-                        else {
-                            prevj = selectedIds.get(numberToSelect-1);
                         }
 
+                        int nexti, previ, nextj, prevj;
+                        nexti = selectedIds.get((i + 1) % numberToSelect); 
+                        nextj = selectedIds.get((indexIdj + 1) % numberToSelect); 
+                        previ = selectedIds.get((i - 1 + numberToSelect) % numberToSelect);
+                        prevj = selectedIds.get((indexIdj - 1 + numberToSelect) % numberToSelect); 
+                        
                         int increase1 = distanceMatrix[idi][idj]
                                 - distanceMatrix[idi][nexti]
                                 + distanceMatrix[nexti][nextj]
-                                -distanceMatrix[nextj][idj];
-                        int increase2 = distanceMatrix[idi][idj]
-                                - distanceMatrix[idi][previ]
-                                + distanceMatrix[previ][prevj]
-                                -distanceMatrix[prevj][idj];
-
-
+                                - distanceMatrix[nextj][idj];
                         if (increase1 < bestchange) {
                             List<Integer> swapped = new ArrayList<>(selectedIds);
-                            List<Integer> sublist = swapped.subList(start_+1, end+1);
-                            Collections.reverse(sublist);
+                            Collections.reverse(swapped.subList(start_ + 1, end + 1));
                             bestsol = swapped;
                             bestchange = increase1;
                             change=3;
                         }
+
+                        int increase2 = distanceMatrix[idi][idj]
+                        - distanceMatrix[idi][previ]
+                        + distanceMatrix[previ][prevj]
+                        - distanceMatrix[prevj][idj];
                         if (increase2 < bestchange) {
                             List<Integer> swapped = new ArrayList<>(selectedIds);
-                            List<Integer> sublist = swapped.subList(start_, end);
-                            Collections.reverse(sublist);
+                            Collections.reverse(swapped.subList(start_, end));
                             bestsol = swapped;
                             bestchange = increase2;
                             change=4;
@@ -211,9 +181,9 @@ public class Steepest2edgesCandidate {
                     }
                 }
             }
-            System.out.println(bestchange);
-            System.out.println(change);
-            System.out.println(bestsol);
+            //System.out.println(bestchange);
+            //System.out.println(change);
+            //System.out.println(bestsol);
 
             // Steepest:
             if (bestchange<0){
