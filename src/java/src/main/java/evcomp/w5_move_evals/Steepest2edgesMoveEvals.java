@@ -182,21 +182,7 @@ public class Steepest2edgesMoveEvals {
             // browse moves from LM
             List<Move> movesToRemove = new ArrayList<>();
             Set<Integer> newlyAffectedNodes = new HashSet<>();
-
-            // int i = 0;
-            // for (Move move : LM){
-            //     // checking why new move of 3297 is after 3134 in out case
-            //     if ((move.getDelta() == -3297) || (move.getDelta() == -3134)){
-            //         i = i +1;
-            //         System.out.println("[i = "+ i + "]----" + move.getDelta() + "-----------------");
-            //         int out = move.checkIfMoveValid(selectedIds, numberToSelect);
-            //         System.out.println("type: " + move.getType());
-            //         int node1_newid = selectedIds.indexOf(move.getNode1());
-            //         int node2_newid = selectedIds.indexOf(move.getNode2());
-            //         System.out.println("{!} {out} = " + out + "for ids: " + node1_newid + " & " + node2_newid);
-            //         System.out.println("---------------------");
-            //     }
-            // }
+            
             for (Move move : LM) { // sorted LM (lowest (best) -> highest (worst))
                 int out = move.checkIfMoveValid(selectedIds, numberToSelect);
 
@@ -204,7 +190,6 @@ public class Steepest2edgesMoveEvals {
                 if (out == 1) { // valid
                     // if move m has been found then x := m(x) (accept m(x)):
                     // modify solution
-                    //System.out.println("[NEW MOVE] " + move.getType() + ": " + move.getDelta());
                     selectedIds = move.modifySolution(selectedIds); 
                     movesToRemove.add(move); // remove the applied move
                     if (move.getType().equals("intra")){

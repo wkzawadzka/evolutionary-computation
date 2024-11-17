@@ -86,10 +86,6 @@ public class Move {
             int node1_newid = solution.indexOf(node1);
             int prevNode_newid = solution.indexOf(prevNode);
             int nextNode_newid = solution.indexOf(nextNode);
-            // System.out.println("Vaslidity check so: ");
-            // System.out.println("prevNode id: " + prevNode_newid);
-            // System.out.println("node1_newid: " + node1_newid);
-            // System.out.println("nextNode_newid: " + nextNode_newid);
             if (((Math.abs(prevNode_newid - node1_newid) != 1) || (Math.abs(nextNode_newid - node1_newid) != 1))
                 && ((Math.abs(prevNode_newid - node1_newid) != numberToSelect-1)) && ((Math.abs(nextNode_newid - node1_newid) != numberToSelect-1))) {
                 output = 0; // Invalid (A) - not adjacent anymore
@@ -122,14 +118,6 @@ public class Move {
                 output = 0; // Invalid (A)
                 return output;
             }
-
-            // check if order same but e.g. should be valid??? for now we skip such cases:
-            // move = 185 90 type: intra delta: -4897 {B/5.txt}
-            // OUT: 2
-            //  prevNode_newid: 34
-            //  start_newid: 33
-            //  end_newid: 84
-            //  nextNode_newid: 85
 
             if (((prevNode_newid - start_newid) == 1) ||  ((end_newid - nextNode_newid) == 1) 
             || start_newid > end_newid) {
