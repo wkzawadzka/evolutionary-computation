@@ -90,13 +90,14 @@ public class Move {
             // System.out.println("prevNode id: " + prevNode_newid);
             // System.out.println("node1_newid: " + node1_newid);
             // System.out.println("nextNode_newid: " + nextNode_newid);
-            if ((Math.abs(prevNode_newid - node1_newid) != 1) || (Math.abs(nextNode_newid - node1_newid) != 1)) {
+            if ((Math.abs(prevNode_newid - node1_newid) != 1) || (Math.abs(nextNode_newid - node1_newid) != 1)
+                && ((Math.abs(prevNode_newid - node1_newid) != numberToSelect-1)) && ((Math.abs(nextNode_newid - node1_newid) != numberToSelect-1))) {
                 output = 0; // Invalid (A) - not adjacent anymore
                 return output;
             }
 
             // check if order same 
-            if ((prevNode_newid - nextNode_newid) == 2) {
+            if (((prevNode_newid - nextNode_newid) == 2) || ((nextNode_newid - prevNode_newid) == numberToSelect-2)){
                 output = 2; // Adjacent but in reversed order, skip (B)
                 return output;
             }

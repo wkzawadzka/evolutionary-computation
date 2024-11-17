@@ -112,7 +112,8 @@ public class Steepest2edgesMoveEvals {
         SortedSet<Move> LM = new TreeSet<>(Comparator
                 .comparingInt(Move::getDelta)
                 .thenComparing(Move::getNode1)    // Compare by node1 if deltas are equal
-                .thenComparing(Move::getNode2));  // Compare by node2 if deltas, and node1 are equal
+                .thenComparing(Move::getNode2)  // Compare by node2 if deltas, and node1 are equal
+                .thenComparing(Move::getNextNode)); // & then by enighbor 
         // Generate an initial solution x
         List<Integer> selectedIds = initialSolution;
 
@@ -146,6 +147,8 @@ public class Steepest2edgesMoveEvals {
                         delta = newCost - oldCost;
                         if (delta < 0 ){
                             LM.add(new Move(selectedIds.get(i), idj, delta, "inter", prevNode1, nextNode1));
+                            // When evaluating new moves we need to consider also moves with inverted edges (same delta)
+                            LM.add(new Move(selectedIds.get(i), idj, delta, "inter", nextNode1, prevNode1));
                         }
                     }
                     else {
@@ -180,16 +183,18 @@ public class Steepest2edgesMoveEvals {
             List<Move> movesToRemove = new ArrayList<>();
             Set<Integer> newlyAffectedNodes = new HashSet<>();
 
+            // int i = 0;
             // for (Move move : LM){
-            //     int i = 0;
-            //     if (move.getDelta() == -4897){
+            //     // checking why new move of 3297 is after 3134 in out case
+            //     if ((move.getDelta() == -3297) || (move.getDelta() == -3134)){
             //         i = i +1;
-            //         // System.out.println("[i = "+ i + "]---------------------");
+            //         System.out.println("[i = "+ i + "]----" + move.getDelta() + "-----------------");
             //         int out = move.checkIfMoveValid(selectedIds, numberToSelect);
+            //         System.out.println("type: " + move.getType());
             //         int node1_newid = selectedIds.indexOf(move.getNode1());
             //         int node2_newid = selectedIds.indexOf(move.getNode2());
-            //         // System.out.println("{!} {out} = " + out + "for ids: " + node1_newid + " & " + node2_newid);
-            //         // System.out.println("---------------------");
+            //         System.out.println("{!} {out} = " + out + "for ids: " + node1_newid + " & " + node2_newid);
+            //         System.out.println("---------------------");
             //     }
             // }
             for (Move move : LM) { // sorted LM (lowest (best) -> highest (worst))
