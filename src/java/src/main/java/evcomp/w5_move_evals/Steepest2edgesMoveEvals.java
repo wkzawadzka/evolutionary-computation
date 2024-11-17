@@ -109,8 +109,10 @@ public class Steepest2edgesMoveEvals {
 
         // Initiate LM – a list of moves that bring improvement ordered from the best to the worst
         // List of improving moves sorter according to the delta
-        SortedSet<Move> LM = new TreeSet<>(Comparator.comparingInt(Move::getDelta));
-
+        SortedSet<Move> LM = new TreeSet<>(Comparator
+                .comparingInt(Move::getDelta)
+                .thenComparing(Move::getNode1)    // Compare by node1 if deltas are equal
+                .thenComparing(Move::getNode2));  // Compare by node2 if deltas, and node1 are equal
         // Generate an initial solution x
         List<Integer> selectedIds = initialSolution;
 
@@ -163,11 +165,12 @@ public class Steepest2edgesMoveEvals {
                         int oldDistance = distanceMatrix[prevNode1][selectedIds.get(start_)] + distanceMatrix[selectedIds.get(end)][nextNode1];
                         int newDistance = distanceMatrix[prevNode1][selectedIds.get(end)] + distanceMatrix[selectedIds.get(start_)][nextNode1];
                         delta = newDistance - oldDistance;
-
                         if (delta < 0 ){
                             LM.add(new Move(selectedIds.get(start_), selectedIds.get(end), delta, "intra", prevNode1, nextNode1));
+                            // When evaluating new moves we need to consider also moves with inverted edges (same delta)
+                            LM.add(new Move(prevNode1, nextNode1, delta, "intra", selectedIds.get(start_), selectedIds.get(end)));
                         }
-
+                        
                     }
                 }
             }
@@ -177,6 +180,18 @@ public class Steepest2edgesMoveEvals {
             List<Move> movesToRemove = new ArrayList<>();
             Set<Integer> newlyAffectedNodes = new HashSet<>();
 
+            // for (Move move : LM){
+            //     int i = 0;
+            //     if (move.getDelta() == -4897){
+            //         i = i +1;
+            //         // System.out.println("[i = "+ i + "]---------------------");
+            //         int out = move.checkIfMoveValid(selectedIds, numberToSelect);
+            //         int node1_newid = selectedIds.indexOf(move.getNode1());
+            //         int node2_newid = selectedIds.indexOf(move.getNode2());
+            //         // System.out.println("{!} {out} = " + out + "for ids: " + node1_newid + " & " + node2_newid);
+            //         // System.out.println("---------------------");
+            //     }
+            // }
             for (Move move : LM) { // sorted LM (lowest (best) -> highest (worst))
                 int out = move.checkIfMoveValid(selectedIds, numberToSelect);
 
@@ -184,6 +199,7 @@ public class Steepest2edgesMoveEvals {
                 if (out == 1) { // valid
                     // if move m has been found then x := m(x) (accept m(x)):
                     // modify solution
+                    //System.out.println("[NEW MOVE] " + move.getType() + ": " + move.getDelta());
                     selectedIds = move.modifySolution(selectedIds); 
                     movesToRemove.add(move); // remove the applied move
                     if (move.getType().equals("intra")){

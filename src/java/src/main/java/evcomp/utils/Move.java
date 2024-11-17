@@ -54,6 +54,7 @@ public class Move {
             //System.out.println("node1_newid: " +  node1_newid + " node2: " + node2);
             swapped.set(node1_newid, node2);
         } else if (moveType.equals("intra")) {
+            //System.out.println("Revesing from node1_newid: " +  node1_newid + " node2: " + node2_newid);
             Collections.reverse(swapped.subList(node1_newid, node2_newid + 1));
         }
         return(swapped);
