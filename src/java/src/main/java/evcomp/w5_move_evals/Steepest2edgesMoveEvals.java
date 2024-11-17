@@ -156,6 +156,7 @@ public class Steepest2edgesMoveEvals {
                             continue;
                         }
 
+                        // normal
                         int prevNode1 = selectedIds.get((start_ - 1 + numberToSelect) % numberToSelect);
                         int nextNode1 = selectedIds.get((end + 1) % numberToSelect);
 
@@ -166,6 +167,7 @@ public class Steepest2edgesMoveEvals {
                         if (delta < 0 ){
                             LM.add(new Move(selectedIds.get(start_), selectedIds.get(end), delta, "intra", prevNode1, nextNode1));
                         }
+
                     }
                 }
             }
@@ -174,55 +176,37 @@ public class Steepest2edgesMoveEvals {
             // browse moves from LM
             List<Move> movesToRemove = new ArrayList<>();
             Set<Integer> newlyAffectedNodes = new HashSet<>();
+
             for (Move move : LM) { // sorted LM (lowest (best) -> highest (worst))
-                // System.out.println("***" + move.getType() + "*****");
-                // System.out.println("move = " + move.getNode1() + " " + move.getNode2());
                 int out = move.checkIfMoveValid(selectedIds, numberToSelect);
-                // System.out.println("out = " + out);
-                // System.out.println("********");
-    
+
                 // Check if m is applicable and if not remove it from LM
                 if (out == 1) { // valid
-                    // if move m has been found then x := m(x) (accept m(x))
-
+                    // if move m has been found then x := m(x) (accept m(x)):
                     // modify solution
-                    // int totalCost = evaluator.calculateTotalCost(selectedIds, nodeList);
-                    // int totalDistance = evaluator.calculateTotalDistance(selectedIds, distanceMatrix);
-                    // int objFuncValue = evaluator.calculateObjectiveFunction(totalCost, totalDistance);
-                    // //System.out.println("[ - ] BEFORE appled objFuncValue::::: " + objFuncValue);
-                    //int temp = objFuncValue + move.getDelta();
-                    //System.out.println("[ - ] SO SHOULD BE AFTER ::::: " + temp);
                     selectedIds = move.modifySolution(selectedIds); 
                     movesToRemove.add(move); // remove the applied move
                     if (move.getType().equals("intra")){
-                        newlyAffectedNodes.add(move.getNode1());
+                        // intra: affected edges are all between start & end
+                        int indexIdj1 = selectedIds.indexOf(move.getNode1());
+                        int indexIdj2 = selectedIds.indexOf(move.getNode2());
+                        newlyAffectedNodes.addAll(selectedIds.subList(indexIdj2, indexIdj1 + 1));
+                    } else {
+                        // inter: affected only 2 edges: prev-> new node & new node -> next
+                        newlyAffectedNodes.add(move.getNode2());
+                        newlyAffectedNodes.add(move.getPrevNode());
+                        newlyAffectedNodes.add(move.getNextNode());
                     }
-                    newlyAffectedNodes.add(move.getNode2());
-                    // totalCost = evaluator.calculateTotalCost(selectedIds, nodeList);
-                    // totalDistance = evaluator.calculateTotalDistance(selectedIds, distanceMatrix);
-                    // objFuncValue = evaluator.calculateObjectiveFunction(totalCost, totalDistance);
-                    // //System.out.println("[ - ] AFTER applied dalta = " + move.getDelta() + "::::: " + objFuncValue + "(type = " + move.getType() + ")");
                     go = true;
                     break;
                 } else if (out == 0) {
                     movesToRemove.add(move);  // remove invalid moves
                 } // else skip (out=2)
             }
-            //System.out.println("BEFORE Size of LM::::: " + LM.size());
-            //System.out.println("Size of movesToRemove::::: " + movesToRemove.size());
             LM.removeAll(movesToRemove);
             affectedNodes = newlyAffectedNodes;
-            //System.out.println("AFTER Size of LM::::: " + LM.size());
-            // Evaluate the objective function
-            // int totalCost = evaluator.calculateTotalCost(selectedIds, nodeList);
-            // int totalDistance = evaluator.calculateTotalDistance(selectedIds, distanceMatrix);
-            // int objFuncValue = evaluator.calculateObjectiveFunction(totalCost, totalDistance);
-            // System.out.println("AFTER objFuncValue::::: " + objFuncValue);
     }
     // until no move has been found after checking the whole list LM
     return selectedIds;
     }
 }
-
-
-//TODO CHECKD DELTA CALULATIONS WITH calculateObjectiveFunction :) sth wrong.

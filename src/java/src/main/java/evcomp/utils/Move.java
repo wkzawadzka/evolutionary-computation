@@ -29,6 +29,14 @@ public class Move {
         return node2;
     }
 
+    public int getPrevNode() {
+        return prevNode;
+    }
+
+    public int getNextNode() {
+        return nextNode;
+    }
+
     public int getDelta() {
         return delta;
     }
@@ -77,7 +85,7 @@ public class Move {
             int node1_newid = solution.indexOf(node1);
             int prevNode_newid = solution.indexOf(prevNode);
             int nextNode_newid = solution.indexOf(nextNode);
-            // System.out.println("Validity check so: ");
+            // System.out.println("Vaslidity check so: ");
             // System.out.println("prevNode id: " + prevNode_newid);
             // System.out.println("node1_newid: " + node1_newid);
             // System.out.println("nextNode_newid: " + nextNode_newid);
@@ -112,7 +120,14 @@ public class Move {
                 return output;
             }
 
-            // check if order same 
+            // check if order same but e.g. should be valid??? for now we skip such cases:
+            // move = 185 90 type: intra delta: -4897 {B/5.txt}
+            // OUT: 2
+            //  prevNode_newid: 34
+            //  start_newid: 33
+            //  end_newid: 84
+            //  nextNode_newid: 85
+
             if (((prevNode_newid - start_newid) == 1) ||  ((end_newid - nextNode_newid) == 1) || start_newid > end_newid) {
                 output = 2; // in different order, skip (B)
                 return output;
