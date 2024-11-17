@@ -90,7 +90,7 @@ public class Move {
             // System.out.println("prevNode id: " + prevNode_newid);
             // System.out.println("node1_newid: " + node1_newid);
             // System.out.println("nextNode_newid: " + nextNode_newid);
-            if ((Math.abs(prevNode_newid - node1_newid) != 1) || (Math.abs(nextNode_newid - node1_newid) != 1)
+            if (((Math.abs(prevNode_newid - node1_newid) != 1) || (Math.abs(nextNode_newid - node1_newid) != 1))
                 && ((Math.abs(prevNode_newid - node1_newid) != numberToSelect-1)) && ((Math.abs(nextNode_newid - node1_newid) != numberToSelect-1))) {
                 output = 0; // Invalid (A) - not adjacent anymore
                 return output;
@@ -117,7 +117,8 @@ public class Move {
             int end_newid = solution.indexOf(node2);
             int prevNode_newid = solution.indexOf(prevNode); // before start
             int nextNode_newid = solution.indexOf(nextNode); // after end
-            if ((Math.abs(prevNode_newid - start_newid) != 1) || (Math.abs(nextNode_newid - end_newid) != 1)) {
+            if (((Math.abs(prevNode_newid - start_newid) != 1) || (Math.abs(nextNode_newid - end_newid) != 1))
+            && ((Math.abs(prevNode_newid - start_newid) != numberToSelect-1)) && ((Math.abs(nextNode_newid - end_newid) != numberToSelect-1))) {
                 output = 0; // Invalid (A)
                 return output;
             }
@@ -130,7 +131,8 @@ public class Move {
             //  end_newid: 84
             //  nextNode_newid: 85
 
-            if (((prevNode_newid - start_newid) == 1) ||  ((end_newid - nextNode_newid) == 1) || start_newid > end_newid) {
+            if (((prevNode_newid - start_newid) == 1) ||  ((end_newid - nextNode_newid) == 1) 
+            || start_newid > end_newid) {
                 output = 2; // in different order, skip (B)
                 return output;
             }
