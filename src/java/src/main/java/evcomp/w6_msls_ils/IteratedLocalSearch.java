@@ -111,7 +111,7 @@ public class IteratedLocalSearch {
         int totalDistance = evaluator.calculateTotalDistance(initialBest, distanceMatrix);
         int initialDelta = evaluator.calculateObjectiveFunction(totalCost, totalDistance);
 
-        while(false||(System.currentTimeMillis()-startTime)<10000){
+        while(false||(System.currentTimeMillis()-startTime)<13172){
             List<Integer> newSolution = Peturb(initialBest);
             List<Integer> selectedIds = localSearch(newSolution, nodeList, distanceMatrix);
 

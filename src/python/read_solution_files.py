@@ -37,26 +37,50 @@ def read_solution_files(week_name):
                                     print(f"File {file_name} does not contain enough data.")
                                     continue
 
-                                # Read the last line for the solution and previous lines for metrics
-                                time_taken = int(data[0].strip()) if data[0].strip().isdigit() else None
-                                total_cost = int(data[1].strip()) if data[1].strip().isdigit() else None
-                                total_distance = int(data[2].strip()) if data[2].strip().isdigit() else None
-                                f_val = int(data[3].strip()) if data[3].strip().isdigit() else None
+                                if method == "IteratedLocalSearch":
+                                    time_taken = int(data[0].strip()) if data[0].strip().isdigit() else None
+                                    total_cost = int(data[1].strip()) if data[1].strip().isdigit() else None
+                                    total_distance = int(data[2].strip()) if data[2].strip().isdigit() else None
+                                    f_val = int(data[3].strip()) if data[3].strip().isdigit() else None
+                                    count = int(data[4].strip()) if data[4].strip().isdigit() else None
 
-                                solution = []
-                                for line in data[5:]:  # From line 6 onwards
-                                    solution.append(int(line.strip()))
+                                    solution = []
+                                    for line in data[6:]:  # From line 6 onwards
+                                        solution.append(int(line.strip()))
 
-                                result = {
-                                    'method': method,
-                                    'instance': instance,
-                                    'time_taken': time_taken,
-                                    'total_cost': total_cost,
-                                    'total_distance': total_distance,
-                                    'f_val': f_val,
-                                    'solution': solution
-                                }
-                                results.append(result) 
+                                    result = {
+                                        'method': method,
+                                        'instance': instance,
+                                        'time_taken': time_taken,
+                                        'total_cost': total_cost,
+                                        'total_distance': total_distance,
+                                        'f_val': f_val,
+                                        'count': count,
+                                        'solution': solution
+                                    }
+                                    results.append(result)
+
+                                else:
+                                    # Read the last line for the solution and previous lines for metrics
+                                    time_taken = int(data[0].strip()) if data[0].strip().isdigit() else None
+                                    total_cost = int(data[1].strip()) if data[1].strip().isdigit() else None
+                                    total_distance = int(data[2].strip()) if data[2].strip().isdigit() else None
+                                    f_val = int(data[3].strip()) if data[3].strip().isdigit() else None
+
+                                    solution = []
+                                    for line in data[5:]:  # From line 6 onwards
+                                        solution.append(int(line.strip()))
+
+                                    result = {
+                                        'method': method,
+                                        'instance': instance,
+                                        'time_taken': time_taken,
+                                        'total_cost': total_cost,
+                                        'total_distance': total_distance,
+                                        'f_val': f_val,
+                                        'solution': solution
+                                    }
+                                    results.append(result)
 
     print(f"Reading data finished\n")
     df = pd.DataFrame(results)

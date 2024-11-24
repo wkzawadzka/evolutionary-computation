@@ -7,7 +7,7 @@ def create_summary_table(df, instance):
         'time_taken': 'Execution Time (ms)',
         # 'total_cost': 'Total Cost',
         # 'total_distance': 'Total Distance',
-        'f_val': 'Objective Function Value'
+        'f_val': 'Objective Function Value',
     }
 
     # Iterate over each variable to create separate summaries

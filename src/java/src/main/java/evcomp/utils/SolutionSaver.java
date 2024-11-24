@@ -77,8 +77,6 @@ public class SolutionSaver {
         String filePath = directoryPath.resolve(runNumber + ".txt").toString();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             // Write the metadata at the top of the file
-            writer.write(String.valueOf(count)); //nanos
-            writer.newLine();
             writer.write(String.valueOf(timeTaken)); //nanos
             writer.newLine();
             writer.write(String.valueOf(totalCost));
@@ -86,6 +84,8 @@ public class SolutionSaver {
             writer.write(String.valueOf(totalDistance));
             writer.newLine();
             writer.write(String.valueOf(objFuncValue));
+            writer.newLine();
+            writer.write(String.valueOf(count)); //nanos
             writer.newLine();
             writer.write("Solution:");
             writer.newLine();
