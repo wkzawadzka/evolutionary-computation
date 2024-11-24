@@ -64,4 +64,40 @@ public class SolutionSaver {
             System.out.println("Error writing to file: " + e.getMessage());
         }
     }
+    public void saveSolution(List<Integer> solution, int runNumber, long timeTaken,
+                             int totalCost, int totalDistance, int objFuncValue, int count) {
+        Path directoryPath = Paths.get("data", "method_outputs", weekName, methodName, instance);
+        File dir = directoryPath.toFile();
+
+        // Create directory if it does not exist
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        String filePath = directoryPath.resolve(runNumber + ".txt").toString();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            // Write the metadata at the top of the file
+            writer.write(String.valueOf(count)); //nanos
+            writer.newLine();
+            writer.write(String.valueOf(timeTaken)); //nanos
+            writer.newLine();
+            writer.write(String.valueOf(totalCost));
+            writer.newLine();
+            writer.write(String.valueOf(totalDistance));
+            writer.newLine();
+            writer.write(String.valueOf(objFuncValue));
+            writer.newLine();
+            writer.write("Solution:");
+            writer.newLine();
+
+            // Write the solution
+            for (Integer id : solution) {
+                writer.write(id.toString());
+                writer.newLine();
+            }
+            System.out.println("Solution saved to: " + filePath);
+        } catch (IOException e) {
+            System.out.println("Error writing to file: " + e.getMessage());
+        }
+    }
 }
