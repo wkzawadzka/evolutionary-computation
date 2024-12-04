@@ -37,7 +37,7 @@ def read_solution_files(week_name):
                                     print(f"File {file_name} does not contain enough data.")
                                     continue
 
-                                if method == "IteratedLocalSearch":
+                                if method in ["IteratedLocalSearch", "LargeNeighborhoodSearchLS", "LargeNeighborhoodSearch"]:
                                     time_taken = int(data[0].strip()) if data[0].strip().isdigit() else None
                                     total_cost = int(data[1].strip()) if data[1].strip().isdigit() else None
                                     total_distance = int(data[2].strip()) if data[2].strip().isdigit() else None
