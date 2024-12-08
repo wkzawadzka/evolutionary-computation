@@ -98,7 +98,7 @@ public class Steepest2edgesCandidate {
         while(go){
             List<Integer> bestsol = new ArrayList<>();
             int bestchange = 0;
-            int change = 0;
+            //int change = 0;
             for (int i = 0; i < numberToSelect; i++){ // for each node in curr solution
                 for (int j = 0; j < 10; j++){ // for each candidate in candidate moves of given node
 
@@ -122,7 +122,7 @@ public class Steepest2edgesCandidate {
                             swapped.set((i - 1 + numberToSelect) % numberToSelect, idj); 
                             bestsol = swapped;
                             bestchange = increase1;
-                            change = 1;
+                            //change = 1;
                         }
 
                         // move2: +1 -> in front of
@@ -134,7 +134,7 @@ public class Steepest2edgesCandidate {
                             swapped.set((i + 1)%(numberToSelect), idj);
                             bestsol = swapped;
                             bestchange = increase2;
-                            change = 2;
+                            //change = 2;
                         }
                     }
                     // if candidate in current solution then do:
@@ -164,7 +164,7 @@ public class Steepest2edgesCandidate {
                             Collections.reverse(swapped.subList(start_ + 1, end + 1));
                             bestsol = swapped;
                             bestchange = increase1;
-                            change=3;
+                            //change=3;
                         }
 
                         int increase2 = distanceMatrix[idi][idj]
@@ -176,7 +176,7 @@ public class Steepest2edgesCandidate {
                             Collections.reverse(swapped.subList(start_, end));
                             bestsol = swapped;
                             bestchange = increase2;
-                            change=4;
+                            //change=4;
                         }
                     }
                 }
