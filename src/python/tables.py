@@ -55,8 +55,6 @@ def create_intergative_summary_table(df):
         pivot_table = grouped.pivot(index='method', columns='instance', values='val')
         pivot_table = pivot_table.replace(to_replace=r'nan \(nan - nan\)', value=np.nan, regex=True)
         pivot_table = pivot_table.dropna(how='any')
-        if variable == "count":
-            print(pivot_table)
 
         summary_stats[variable] = pivot_table
 
