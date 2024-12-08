@@ -154,10 +154,28 @@ public class LargeNeighborhoodSearch {
         // sort subpaths by objective function in descending order (highest scores first)
         subpaths.sort((a, b) -> Double.compare(b.getValue(), a.getValue()));
 
+        // calculate probabilities based on the highest score
+        int highestScore = subpaths.get(0).getValue();
+        List<Double> probabilities = new ArrayList<>();
+        for (Map.Entry<List<Integer>, Integer> entry : subpaths) {
+            probabilities.add(entry.getValue() / (double) highestScore); // normalize by highest score
+        }
+
         // remove
-        for (int i = 0; i < n_subpaths && i < subpaths.size(); i++) {
-            List<Integer> toRemove = subpaths.get(i).getKey(); // get the subpath
-            destroyed.removeAll(toRemove); // remove all nodes in this subpath from the solution
+        // Randomly select and remove subpaths based on probabilities
+        for (int i = 0; i < n_subpaths && !subpaths.isEmpty(); i++) {
+            double rand = RANDOM.nextDouble(); // generate random probability [0, 1)
+            double cumulativeProbability = 0.0;
+            for (int j = 0; j < subpaths.size(); j++) {
+                cumulativeProbability += probabilities.get(j);
+                if (rand <= cumulativeProbability) {
+                    List<Integer> toRemove = subpaths.get(j).getKey(); 
+                    destroyed.removeAll(toRemove); 
+                    subpaths.remove(j); 
+                    probabilities.remove(j); 
+                    break;
+                }
+            }
         }
         int n_removed = solution.size() - destroyed.size();
 
