@@ -10,3 +10,6 @@ __pycache__/
 # Confs
 *.json
 .vscode/*
+
+# Data
+data/
