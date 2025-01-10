@@ -6,3 +6,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.pyc
+
+# Confs
+*.json
+.vscode/*
