@@ -10,6 +10,8 @@ __pycache__/
 # Confs
 *.json
 .vscode/*
+.idea/*
 
 # Data
-data/
+data/*
+reports/*.docx
