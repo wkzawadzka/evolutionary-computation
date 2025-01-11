@@ -4,7 +4,6 @@ package evcomp.w8_global_convex;
 import evcomp.utils.Evaluator;
 import evcomp.utils.InputGenerator;
 import evcomp.utils.Node;
-import evcomp.utils.SolutionSaver;
 import evcomp.utils.Move;
 
 import java.io.BufferedWriter;
@@ -26,7 +25,6 @@ import java.util.TreeSet;
 public class GlobalConvex {
     private static Random RANDOM;
     private static Evaluator evaluator;
-    private static int count;
 
     public static void main(String[] args) {
         // Args
