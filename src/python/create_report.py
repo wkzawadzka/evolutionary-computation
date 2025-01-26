@@ -17,7 +17,7 @@ def save_doc(doc, week_name):
     print(f"Summary report saved to '{doc_path}'.")
 
 def create_summary_report(df, week_name, type='separate', addonDf=None):
-    # type: separate or integrative
+    # type
     doc = Document()
 
     # authors
